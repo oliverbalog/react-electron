@@ -1,6 +1,6 @@
 import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
 
-export type Channels = 'ipc-example';
+export type Channels = 'minimizeApp' | 'maximizeApp' | 'closeApp';
 
 const electronHandler = {
   ipcRenderer: {
@@ -23,5 +23,12 @@ const electronHandler = {
 };
 
 contextBridge.exposeInMainWorld('electron', electronHandler);
+contextBridge.exposeInMainWorld('electron', {
+  ipcRenderer: {
+    sendMessage(channel: Channels, args: unknown[]) {
+      ipcRenderer.send(channel, args);
+    },
+  },
+});
 
 export type ElectronHandler = typeof electronHandler;
